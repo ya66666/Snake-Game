@@ -6,10 +6,10 @@ pygame.init()
 
 # Screen size
 SCALE = 2 
-SCREEN_WIDTH = 300
-SCREEN_HEIGHT = 300 
+SCREEN_WIDTH = 300 * SCALE
+SCREEN_HEIGHT = 300 * SCALE
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-GRID_SIZE = 150
+GRID_SIZE = 10 * SCALE
 
 # Color, and font for game text
 WHITE = (255, 255, 255)
