@@ -26,15 +26,15 @@ pygame.display.set_icon(snake_icon)
 # Snake
 snake = pygame.image.load('Green Dot.png')
 snake = pygame.transform.scale(snake, (GRID_SIZE, GRID_SIZE))
-snakeX = random.randint(10, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
-snakeY = random.randint(10, SCREEN_HEIGHT - GRID_SIZE) // GRID_SIZE * GRID_SIZE
+snakeX = random.randint(0, (SCREEN_WIDTH // GRID_SIZE) - 1) * GRID_SIZE
+snakeY = random.randint(0, (SCREEN_HEIGHT // GRID_SIZE) - 1) * GRID_SIZE
 snake_moveX = snake_moveY = 0
 
 # Apple
 apple = pygame.image.load('Red Dot.png')
 apple = pygame.transform.scale(apple, (GRID_SIZE, GRID_SIZE))
-appleX = random.randint(0, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
-appleY = random.randint(0, SCREEN_HEIGHT - GRID_SIZE) // GRID_SIZE * GRID_SIZE
+appleX = random.randint(0, (SCREEN_WIDTH // GRID_SIZE) - 1) * GRID_SIZE
+appleY = random.randint(0, (SCREEN_HEIGHT // GRID_SIZE) - 1) * GRID_SIZE
 
 # Snake body Queue
 snake_body = [(snakeX, snakeY)]
@@ -55,8 +55,8 @@ def Intialize():
 
 def Snake_respawn():
     global snakeX, snakeY, snake_moveX, snake_moveY
-    snakeX = random.randint(10, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
-    snakeY = random.randint(10, SCREEN_HEIGHT - GRID_SIZE) // GRID_SIZE * GRID_SIZE
+    snakeX = random.randint(0, (SCREEN_WIDTH // GRID_SIZE) - 1) * GRID_SIZE
+    snakeY = random.randint(0, (SCREEN_HEIGHT // GRID_SIZE) - 1) * GRID_SIZE
     snake_moveX = snake_moveY = 0
 
 # Update the whole corrdinate of body, add the new snakeX and snakeY, remove the end of the body
@@ -88,8 +88,8 @@ def Spawn_new_apple():
     spawn_in_empty = False
     while not spawn_in_empty:
         if map[appleY // GRID_SIZE][appleX // GRID_SIZE]:
-            appleX = random.randint(0, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
-            appleY = random.randint(0, SCREEN_HEIGHT - GRID_SIZE) // GRID_SIZE * GRID_SIZE
+            appleX = random.randint(0, (SCREEN_WIDTH // GRID_SIZE) - 1) * GRID_SIZE
+            appleY = random.randint(0, (SCREEN_HEIGHT // GRID_SIZE) - 1) * GRID_SIZE
         else:
             spawn_in_empty = True
 
