@@ -5,11 +5,11 @@ import random, math
 pygame.init()
 
 # Screen size
-SCALE = 1 
-SCREEN_WIDTH = 300 * SCALE
-SCREEN_HEIGHT = 300 * SCALE
+SCALE = 2 
+SCREEN_WIDTH = 300
+SCREEN_HEIGHT = 300 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-GRID_SIZE = 10 * SCALE
+GRID_SIZE = 150
 
 # Color, and font for game text
 WHITE = (255, 255, 255)
@@ -27,14 +27,14 @@ pygame.display.set_icon(snake_icon)
 snake = pygame.image.load('Green Dot.png')
 snake = pygame.transform.scale(snake, (GRID_SIZE, GRID_SIZE))
 snakeX = random.randint(10, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
-snakeY = random.randint(10, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
+snakeY = random.randint(10, SCREEN_HEIGHT - GRID_SIZE) // GRID_SIZE * GRID_SIZE
 snake_moveX = snake_moveY = 0
 
 # Apple
 apple = pygame.image.load('Red Dot.png')
 apple = pygame.transform.scale(apple, (GRID_SIZE, GRID_SIZE))
 appleX = random.randint(0, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
-appleY = random.randint(0, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
+appleY = random.randint(0, SCREEN_HEIGHT - GRID_SIZE) // GRID_SIZE * GRID_SIZE
 
 # Snake body Queue
 snake_body = [(snakeX, snakeY)]
@@ -42,7 +42,7 @@ snake_length = 1
 snake_tail = (snakeX, snakeY)
 
 def Intialize():
-    global map, snake_body, snake_length, snake_tail
+    global map, snake_body, snake_length, snake_tail, ignore_position, x_or_y
     del map
     map = [[False for x in range((SCREEN_WIDTH) // GRID_SIZE)] for y in range((SCREEN_HEIGHT) // GRID_SIZE)]
     Snake_respawn()
@@ -50,11 +50,13 @@ def Intialize():
     snake_body = [(snakeX, snakeY)]
     snake_length = 1
     snake_tail = (snakeX, snakeY)
+    ignore_position = ""
+    x_or_y = True
 
 def Snake_respawn():
     global snakeX, snakeY, snake_moveX, snake_moveY
     snakeX = random.randint(10, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
-    snakeY = random.randint(10, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
+    snakeY = random.randint(10, SCREEN_HEIGHT - GRID_SIZE) // GRID_SIZE * GRID_SIZE
     snake_moveX = snake_moveY = 0
 
 # Update the whole corrdinate of body, add the new snakeX and snakeY, remove the end of the body
@@ -87,7 +89,7 @@ def Spawn_new_apple():
     while not spawn_in_empty:
         if map[appleY // GRID_SIZE][appleX // GRID_SIZE]:
             appleX = random.randint(0, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
-            appleY = random.randint(0, SCREEN_WIDTH - GRID_SIZE) // GRID_SIZE * GRID_SIZE
+            appleY = random.randint(0, SCREEN_HEIGHT - GRID_SIZE) // GRID_SIZE * GRID_SIZE
         else:
             spawn_in_empty = True
 
@@ -130,7 +132,7 @@ x_or_y = True
 ignore_position = ""
 
 # FPS
-TARGET_FPS = 10
+TARGET_FPS = 2
 clock = pygame.time.Clock()
 
 running = True
@@ -176,22 +178,24 @@ while running:
         Draw_Win()
 
     else:
-        if x_or_y:
+        if x_or_y: 
             snake_moveY = 0
         else:
             snake_moveX = 0
-        
-        snakeX += snake_moveX
-        snakeY += snake_moveY
-        if Out_of_Bound() or isCollision():
-            game_over = True
-            continue
+            
+        if snake_moveX != 0 or snake_moveY != 0:
+            snakeX += snake_moveX
+            snakeY += snake_moveY
+            if Out_of_Bound() or isCollision():
+                game_over = True
+                continue
 
-        Update_body()
+            Update_body()
+        
         if Eat_apple(snakeX, snakeY, appleX, appleY):
             snake_length += 1
             Add_body()
-            if snake_length == SCREEN_WIDTH * SCREEN_HEIGHT:
+            if snake_length == (SCREEN_WIDTH // GRID_SIZE) * (SCREEN_HEIGHT // GRID_SIZE):
                 win = True
                 continue
             else:
