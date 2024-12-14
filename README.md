@@ -1,1 +1,1 @@
-Download the folder and execute snake game python file
+Download the whole folder and execute the Snake Game.py to play the game.
