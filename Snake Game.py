@@ -132,7 +132,7 @@ x_or_y = True
 ignore_position = ""
 
 # FPS
-TARGET_FPS = 2
+TARGET_FPS = 10
 clock = pygame.time.Clock()
 
 running = True
