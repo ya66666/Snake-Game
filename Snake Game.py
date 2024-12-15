@@ -1,3 +1,5 @@
+# Made by Kai-Jen Chuang
+
 import pygame, time
 import random, math
 
@@ -166,6 +168,9 @@ x_or_y = True
 # Press s -> ignore "w"
 ignore_position = ""
 
+# Only one input
+Input_buffer = []
+
 # FPS
 TARGET_FPS = 60
 clock = pygame.time.Clock()
@@ -179,47 +184,59 @@ game_over = win = False
 while running:
     # Control the FPS of the game, TARGET_FPS = 10, 10 frames per second, 1000ms/10 = 100ms per frame
     clock.tick(TARGET_FPS)
-    screen.fill((0, 0, 0))
-
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         
         if event.type == SCREEN_UPDATE:
             Snake_move()
+            Input_buffer.clear()
 
         if event.type == pygame.KEYDOWN:
             if game_over or win:
                 if event.key == pygame.K_SPACE:
                     Intialize()
+                    Input_buffer.clear()
                     game_over = win = False
                     
                 continue
             
-            if ( (event.key == pygame.K_w or event.key == pygame.K_UP) and ignore_position != "s" ):
+            if ( len(Input_buffer) < 1 and (event.key == pygame.K_w or event.key == pygame.K_UP) and ignore_position != "s" ):
                 x_or_y = False
                 ignore_position = "w"
+                Input_buffer.append("w")
                 snake_moveY = -GRID_SIZE
-            elif ( (event.key == pygame.K_s or event.key == pygame.K_DOWN) and ignore_position != "w" ):
+            elif ( len(Input_buffer) < 1 and  (event.key == pygame.K_s or event.key == pygame.K_DOWN) and ignore_position != "w" ):
                 x_or_y = False
                 ignore_position = "s"
+                Input_buffer.append("s")
                 snake_moveY = GRID_SIZE
-            elif ( (event.key == pygame.K_a or event.key == pygame.K_LEFT) and ignore_position != "d" ):
+            elif ( len(Input_buffer) < 1 and  (event.key == pygame.K_a or event.key == pygame.K_LEFT) and ignore_position != "d" ):
                 x_or_y = True
                 ignore_position = "a"
+                Input_buffer.append("a")
                 snake_moveX = -GRID_SIZE
-            elif ( (event.key == pygame.K_d or event.key == pygame.K_RIGHT) and ignore_position != "a" ):
+            elif ( len(Input_buffer) < 1 and  (event.key == pygame.K_d or event.key == pygame.K_RIGHT) and ignore_position != "a" ):
                 x_or_y = True
                 ignore_position = "d"
+                Input_buffer.append("d")
                 snake_moveX = GRID_SIZE
-        
+
+            # ignore_position -> current position, Input_buffer -> the lock position
+            if len(Input_buffer) != 0 and ( ( ignore_position == "w" and Input_buffer[0] == "s" ) or ( ignore_position == "s" and Input_buffer[0] == "w" ) or ( ignore_position == "a" and Input_buffer[0] == "d" ) or ( ignore_position == "d" and Input_buffer[0] == "a" )):
+                Input_buffer.clear()
+
+
     if game_over:
         Draw_game_over()
 
     elif win:
+        Snake()
         Draw_Win()
 
     else:
+        screen.fill((0, 0, 0))
         Snake()
         Apple(appleX, appleY)
 
