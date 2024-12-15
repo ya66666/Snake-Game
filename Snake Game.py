@@ -30,6 +30,9 @@ snakeX = random.randint(0, (SCREEN_WIDTH // GRID_SIZE) - 1) * GRID_SIZE
 snakeY = random.randint(0, (SCREEN_HEIGHT // GRID_SIZE) - 1) * GRID_SIZE
 snake_moveX = snake_moveY = 0
 
+# Snake Speed
+speed = 150
+
 # Apple
 apple = pygame.image.load('Red Dot.png')
 apple = pygame.transform.scale(apple, (GRID_SIZE, GRID_SIZE))
@@ -52,6 +55,7 @@ def Intialize():
     snake_tail = (snakeX, snakeY)
     ignore_position = ""
     x_or_y = True
+    pygame.time.set_timer(SCREEN_UPDATE, speed)
 
 def Snake_respawn():
     global snakeX, snakeY, snake_moveX, snake_moveY
@@ -121,6 +125,37 @@ def Draw_Win():
     text_rect = win_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
     screen.blit(win_text, text_rect)
 
+def Snake_move():
+    global snake_moveY, snake_moveX, snake_length, win, game_over, snakeX, snakeY
+
+    if x_or_y: 
+        snake_moveY = 0
+    else:
+        snake_moveX = 0
+        
+    if (snake_moveX != 0 or snake_moveY != 0 ):
+        snakeX += snake_moveX
+        snakeY += snake_moveY
+    
+        if Out_of_Bound() or isCollision():
+            game_over = True
+            # Stop the timer
+            pygame.time.set_timer(SCREEN_UPDATE, 0)
+            return
+
+        Update_body()
+    
+    if Eat_apple(snakeX, snakeY, appleX, appleY):
+        snake_length += 1
+        Add_body()
+        if snake_length == (SCREEN_WIDTH // GRID_SIZE) * (SCREEN_HEIGHT // GRID_SIZE):
+            win = True
+            # Stop the timer
+            pygame.time.set_timer(SCREEN_UPDATE, 0)
+            return
+        else:
+            Spawn_new_apple()
+
 # move in x -> true, move in y -> false
 x_or_y = True
 
@@ -132,8 +167,12 @@ x_or_y = True
 ignore_position = ""
 
 # FPS
-TARGET_FPS = 10
+TARGET_FPS = 60
 clock = pygame.time.Clock()
+
+# Snake move Update
+SCREEN_UPDATE = pygame.USEREVENT
+pygame.time.set_timer(SCREEN_UPDATE, speed)
 
 running = True
 game_over = win = False
@@ -146,6 +185,9 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         
+        if event.type == SCREEN_UPDATE:
+            Snake_move()
+
         if event.type == pygame.KEYDOWN:
             if game_over or win:
                 if event.key == pygame.K_SPACE:
@@ -178,29 +220,6 @@ while running:
         Draw_Win()
 
     else:
-        if x_or_y: 
-            snake_moveY = 0
-        else:
-            snake_moveX = 0
-            
-        if snake_moveX != 0 or snake_moveY != 0:
-            snakeX += snake_moveX
-            snakeY += snake_moveY
-            if Out_of_Bound() or isCollision():
-                game_over = True
-                continue
-
-            Update_body()
-        
-        if Eat_apple(snakeX, snakeY, appleX, appleY):
-            snake_length += 1
-            Add_body()
-            if snake_length == (SCREEN_WIDTH // GRID_SIZE) * (SCREEN_HEIGHT // GRID_SIZE):
-                win = True
-                continue
-            else:
-                Spawn_new_apple()
-
         Snake()
         Apple(appleX, appleY)
 
